@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby D+ Widget</title>
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #FFE5EC, #E0F7FA);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 30px;
+    padding: 60px 70px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  }
+
+  .name {
+    font-size: 26px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 25px;
+  }
+
+  .dday {
+    font-size: 72px;
+    font-weight: 900;
+    color: #FF4F81;
+    margin-bottom: 15px;
+  }
+
+  .months {
+    font-size: 20px;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="name">우리 하연이❤️</div>
+  <div class="dday" id="dday"></div>
+  <div class="months" id="months"></div>
+</div>
+
+<script>
+  // ⭐ 생년월일 수정
+  const BIRTH_DATE = "2025-01-01";
+
+  function updateWidget() {
+    const birth = new Date(BIRTH_DATE);
+    const now = new Date();
+
+    const birthMid = new Date(birth.getFullYear(), birth.getMonth(), birth.getDate());
+    const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const diffTime = todayMid - birthMid;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    // 태어난 날을 1일로 계산
+    const dday = diffDays + 1;
+    document.getElementById("dday").innerText = "D+" + dday;
+
+    // 개월수 계산
+    let months = (todayMid.getFullYear() - birthMid.getFullYear()) * 12 +
+                 (todayMid.getMonth() - birthMid.getMonth());
+
+    let tempDate = new Date(birthMid);
+    tempDate.setMonth(tempDate.getMonth() + months);
+
+    if (todayMid < tempDate) {
+      months--;
+      tempDate.setMonth(tempDate.getMonth() - 1);
+    }
+
+    const daysAfterMonth = Math.floor(
+      (todayMid - tempDate) / (1000 * 60 * 60 * 24)
+    );
+
+    document.getElementById("months").innerText =
+      months + "개월 " + daysAfterMonth + "일";
+  }
+
+  function autoRefreshAtMidnight() {
+    const now = new Date();
+    const tomorrow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+      0, 0, 1
+    );
+    const timeout = tomorrow - now;
+    setTimeout(() => {
+      location.reload();
+    }, timeout);
+  }
+
+  updateWidget();
+  autoRefreshAtMidnight();
+</script>
+
+</body>
+</html>
